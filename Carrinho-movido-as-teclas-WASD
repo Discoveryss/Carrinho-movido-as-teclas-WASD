@@ -1,0 +1,212 @@
+#define PIN_LEFT_RUN   4
+ 
+#define PIN_LEFT_BACK  5
+ 
+#define PIN_RIGHT_RUN  6
+ 
+#define PIN_RIGHT_BACK 7
+ 
+ 
+#define STATIC 0
+ 
+#define FRONT  1
+ 
+#define LEFT   2
+ 
+#define BACK   3
+ 
+#define RIGHT  4
+ 
+ 
+#define DELAY 0
+ 
+ 
+ 
+// NOTE: Variável global que salva o estado de movimento do carrinho (valor inteiro, veja os defines)
+ 
+ 
+int globalState = STATIC;
+ 
+ 
+ 
+// INFO: Uma vez com o `globalState` atualizado, ele executa um bloco diferente para cada valor
+ 
+ 
+void updateCarMovement(void) {
+ 
+  switch (globalState) {
+ 
+    case STATIC:
+ 
+      Serial.println("Carro PARADO \n");
+ 
+ 
+      digitalWrite(PIN_LEFT_RUN, LOW);
+ 
+      digitalWrite(PIN_LEFT_BACK, LOW);
+ 
+      digitalWrite(PIN_RIGHT_RUN, LOW);
+ 
+      digitalWrite(PIN_RIGHT_BACK, LOW);
+ 
+      break;
+ 
+ 
+    case FRONT:
+ 
+      Serial.println("Andando para FRENTE \n");
+ 
+ 
+      digitalWrite(PIN_LEFT_RUN, HIGH);
+ 
+      digitalWrite(PIN_LEFT_BACK, LOW);
+ 
+      digitalWrite(PIN_RIGHT_RUN, HIGH);
+ 
+      digitalWrite(PIN_RIGHT_BACK, LOW);
+ 
+      break;
+ 
+ 
+    case LEFT:
+ 
+      Serial.println("Andando para ESQUERDA \n");
+ 
+ 
+      digitalWrite(PIN_LEFT_RUN, LOW);
+ 
+      digitalWrite(PIN_LEFT_BACK, HIGH);
+ 
+      digitalWrite(PIN_RIGHT_RUN, HIGH);
+ 
+      digitalWrite(PIN_RIGHT_BACK, LOW);
+ 
+      break;
+ 
+ 
+    case BACK:
+ 
+      Serial.println("Andando para TRAS \n");
+ 
+ 
+      digitalWrite(PIN_LEFT_RUN, LOW);
+ 
+      digitalWrite(PIN_LEFT_BACK, HIGH);
+ 
+      digitalWrite(PIN_RIGHT_RUN, LOW);
+ 
+      digitalWrite(PIN_RIGHT_BACK, HIGH);
+ 
+      break;
+ 
+ 
+ 
+    case RIGHT:
+ 
+      Serial.println("Andando para DIREITA \n");
+ 
+ 
+      digitalWrite(PIN_LEFT_RUN, HIGH);
+ 
+      digitalWrite(PIN_LEFT_BACK, LOW);
+ 
+      digitalWrite(PIN_RIGHT_RUN, LOW);
+ 
+      digitalWrite(PIN_RIGHT_BACK, HIGH);
+ 
+      break;
+ 
+  }
+ 
+}
+ 
+ 
+ 
+// INFO: Muda o valor global do carriho baseado no caractere do teclado
+ 
+// NOTE: Aqui dá pra adicionar/remover esses cases para usar teclas diferentes para cada direção
+ 
+ 
+void updateGlobalStateValue(char command) {
+ 
+  switch (command) {
+ 
+    case '0': case 'p': case 'P': case ' ':
+ 
+      globalState = STATIC;
+ 
+      break;
+ 
+ 
+    case '1': case 'w': case 'W':
+ 
+      globalState = FRONT;
+ 
+      break;
+ 
+ 
+    case '2': case 'a': case 'A':
+ 
+      globalState = LEFT;
+ 
+      break;
+ 
+ 
+    case '3': case 's': case 'S':
+ 
+      globalState = BACK;
+ 
+      break;
+ 
+ 
+    case '4': case 'd': case 'D':
+ 
+      globalState = RIGHT;
+ 
+  }
+ 
+}
+ 
+ 
+ 
+// INFO: Seta os pinos como saída e configura a porta serial de comunicação
+ 
+ 
+void setup(void) {
+ 
+  Serial.begin(9600);
+ 
+ 
+  pinMode(PIN_LEFT_RUN, OUTPUT);
+ 
+  pinMode(PIN_LEFT_BACK, OUTPUT);
+ 
+  pinMode(PIN_RIGHT_RUN, OUTPUT);
+ 
+  pinMode(PIN_RIGHT_BACK, OUTPUT);
+ 
+}
+ 
+ 
+ 
+// INFO: Salva o input do comando, mostra a tecla registrada e, depois, movimenta o carro
+ 
+ 
+void loop(void) {
+ 
+  char command = Serial.read();
+ 
+ 
+  Serial.print("Commando: ");
+ 
+  Serial.println(command);
+ 
+ 
+  updateCarMovement();
+ 
+  updateGlobalStateValue(command);
+ 
+ 
+  delay(DELAY);
+ 
+}
